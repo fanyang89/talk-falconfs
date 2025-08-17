@@ -5,11 +5,13 @@ This is a technical presentation about FalconFS distributed file system, focusin
 ## Presentation Content
 
 ### Core Topics
+
 - **FalconFS**: Distributed file system designed for large-scale deep learning pipelines
 - **Production Validation**: Used in Huawei's autonomous driving system with 10,000 NPUs for one year
 - **Performance Advantages**: 5.72× improvement in small file I/O, 12.81× improvement in deep learning training
 
 ### Main Chapters
+
 1. **Background** - Challenges in deep learning scenarios
 2. **Data Lake Technology** - Modern data management solutions
 3. **Deep Learning Pipeline** - Autonomous driving training pipeline
@@ -18,6 +20,7 @@ This is a technical presentation about FalconFS distributed file system, focusin
 6. **Performance Evaluation** - MLPerf Storage Benchmark results
 
 ### Core Innovations
+
 - **Stateless Client**: Removes client metadata caching, enables single-hop access
 - **Hybrid Indexing**: Intelligent routing combining hash and path traversal
 - **Concurrent Request Merging**: Reduces network round trips, improves training efficiency
