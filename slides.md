@@ -24,8 +24,9 @@ seoMeta:
   ogImage: auto
   # ogImage: https://cover.sli.dev
 layout: intro-image
-image: "./public/falcon.jpg"
+image: ./public/falcon.jpg
 hideInToc: true
+colorSchema: dark
 fonts:
   sans: 方正屏显雅宋_GBK
   serif: 方正屏显雅宋_GBK
