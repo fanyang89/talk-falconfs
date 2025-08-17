@@ -442,6 +442,33 @@ FalconFS 在每个 MNode 上维护一个一致的但不一定完整的命名空�
 
 ---
 
+# 为什么 Lustre 在 HPC 场景应用广泛？
+
+## HPC vs 深度学习：工作负载差异
+
+| 特性             | HPC 工作负载      | 深度学习工作负载   |
+| ---------------- | ----------------- | ------------------ |
+| **文件访问模式** | 顺序读写大文件    | 随机访问海量小文件 |
+| **数据特征**     | 大文件（GB-TB级） | 小文件（KB-MB级）  |
+| **访问局部性**   | 强时间局部性      | 弱局部性，随机遍历 |
+| **并发模式**     | MPI-IO 协同访问   | 独立随机访问       |
+| **缓存效果**     | 客户端缓存有效    | 客户端缓存失效     |
+
+## Lustre 在 HPC 的优势
+
+- **高吞吐量**：支持数百GB/s到TB/s的聚合吞吐量 <mcreference link="https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre" index="3">3</mcreference>
+- **大规模扩展**：支持数万客户端和数十PB存储 <mcreference link="https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre" index="3">3</mcreference>
+- **并行文件系统**：大文件分布在多个节点，适合HPC的大文件处理 <mcreference link="https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre" index="3">3</mcreference>
+- **MPI-IO支持**：多进程协同读写同一文件，适合科学计算 <mcreference link="https://juicefs.com/en/blog/user-stories/hpc-ai-file-system" index="4">4</mcreference>
+
+## 为什么不适合深度学习？
+
+- HPC应用通常处理大文件，客户端缓存命中率高
+- 深度学习随机访问模式使传统缓存策略失效
+- 小文件元数据操作成为瓶颈，而非数据吞吐量
+
+---
+
 # 评估
 
 ![](./public/x33.png)
