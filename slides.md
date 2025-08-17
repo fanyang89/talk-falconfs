@@ -5,12 +5,9 @@ theme: apple-basic
 # like them? see https://unsplash.com/collections/94734566/slidev
 # background: ./falcon.jpg
 # some information about your slides (markdown enabled)
-title: Welcome to Slidev
+title: FalconFS
 info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
+  Learn more at [fuis.me](https://fuis.me)
 # apply unocss classes to the current slide
 # class: text-center
 # https://sli.dev/features/drawing
@@ -81,7 +78,7 @@ hideInToc: true
 <!--
   - 后续再根据分析需求进行处理和应用 -->
 
-## 现代数据湖方案：Apache IceBerg、DuckLake 等
+## 现代数据湖方案：Apache IceBerg、Delta Lake、DuckLake 等
 
 - 在底层存储（HDFS、S3）上，构建了智能的元数据管理层
 - 通过管理数据和元数据，为文件系统带来了数据库级的特性
@@ -128,7 +125,7 @@ FalconFS vs CephFS, Lustre
 
 # DL workload pattern
 
-1. Enumerous small objects in large directories
+1. Enormous small objects in large directories
    - 自动驾驶流程消耗多模态数据，包括图像、点云
    - 标注和训练过程中，这些对象被存储为单个文件，其大小从几 KiB 到几 MiB 不等
      - 大多数在 256KiB 以内
@@ -230,7 +227,7 @@ hideInToc: true
 
 这种有状态客户端的结构，不适合深度学习训练负载：
 
-- 每次 iter 从一个包含超多文件的目录中，寻找一个 batch
+- 每次迭代从包含大量文件的目录中随机选取一个 batch
   - 千亿文件 vs batch=50
   - 单卡 A100 80G 可以在 INT8 精度下 batch=50
 - 访问都是随机的：为了 working set 设计的缓存不适用
@@ -363,7 +360,7 @@ hideInToc: true
 https://zh.wikipedia.org/wiki/%E5%A4%A7%E6%95%B8%E6%B3%95%E5%89%87
 -->
 
-打补丁：
+解决方案：
 
 - 某些情况下，文件名哈希可能导致文件分布不均
   - 应用程序的命名规范可能导致某些文件名比其他文件名更频繁
@@ -390,7 +387,7 @@ Coordinator 使用 MNode 周期性报告的统计数据来做出重新平衡的�
 每个 MNode 周期性地报告：
 
 - 本地 inode 数量
-- 出现频率最高的 $O(nlogn)$ 本地文件名及其出现次数，其中 $n$ 是 MNode 的数量
+- 出现频率最高的 $O(n \log n)$ 本地文件名及其出现次数，其中 $n$ 是 MNode 的数量
 
 目标：
 
@@ -440,7 +437,7 @@ FalconFS 在每个 MNode 上维护一个一致的但不一定完整的命名空�
 
 ![](./public/x33.png)
 
-P.S. 这个论文的评估部分很好看，建议自己看看
+P.S. 论文评估部分详细展示了 FalconFS 的优势，建议参考原文
 
 <!-- - MLPerf Storage Benchmark
   - 分布在 100 万个目录中的 1000 万文件上训练 ResNet-50，每个文件大小为 112 KiB
