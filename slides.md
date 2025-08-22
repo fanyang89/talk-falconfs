@@ -54,10 +54,16 @@ hideInToc: true
 
 # 背景
 
+<v-clicks depth="2">
+
 - 深度学习场景，需要管理巨量小文件
   - Transformer：需要巨量的文本数据进行预训练，data-hungry
   - 高质量文本数据已经基本用尽
 - 训练场景：需要从数据集里随机选取 batch
+
+</v-clicks>
+
+<v-clicks>
 
 ## 推荐阅读
 
@@ -65,27 +71,42 @@ Big Metadata: When Metadata is Big Data
 
 Pavan Edara and Mosha Pasumansky. Big Metadata: When Metadata is Big Data. PVLDB, 14(12): 3083 - 3095, 2021.
 
+</v-clicks>
+
 ---
 hideInToc: true
 ---
 
 # 数据仓库和数据湖
 
+<v-clicks depth="2">
+
 - 数据仓库：数据在写入前就预先定义好结构
   - 处理来源多样、格式各异的大数据时显得力不从心，灵活性差
 - 数据湖：先将所有原始格式的数据完整地存储起来
   - 尤其适合业务模式尚不清晰的探索阶段
 
+</v-clicks>
+
 <!--
-  - 后续再根据分析需求进行处理和应用 -->
+后续再根据分析需求进行处理和应用
+-->
+
+<v-clicks>
 
 ## 现代数据湖方案：Apache IceBerg、Delta Lake、DuckLake 等
+
+</v-clicks>
+
+<v-clicks depth="2">
 
 - 在底层存储（HDFS、S3）上，构建了智能的元数据管理层
 - 通过管理数据和元数据，为文件系统带来了数据库级的特性
   - ACID 支持
   - 高效的数据更新（Upsert/Delete）与读取
   - 版本回溯
+
+</v-clicks>
 
 ---
 hideInToc: true
@@ -111,20 +132,34 @@ hideInToc: true
 
 FalconFS 已在华为自动驾驶系统的生产环境中使用 10,000 个 NPU 运行了一年
 
+<v-clicks>
+
 ## 核心思想
 
 - 实现多数文件操作的单跳访问，移除客户端元数据缓存
+
+</v-clicks>
+
+<v-clicks>
 
 ## 评估
 
 FalconFS vs CephFS, Lustre
 
+</v-clicks>
+
+<v-clicks>
+
 - FalconFS 在小文件读写方面实现了高达 5.72× 的吞吐量（对比CephFS）
 - 在深度学习模型训练方面实现了高达 12.81× 的吞吐量（80-128 GPU规模下对比CephFS的11.09-11.81×提升）
+
+</v-clicks>
 
 ---
 
 # DL workload pattern
+
+<v-clicks depth="2">
 
 1. Enormous small objects in large directories
    - 自动驾驶流程消耗多模态数据，包括图像、点云
@@ -136,6 +171,8 @@ FalconFS vs CephFS, Lustre
 2. Random file traversal
    - 训练阶段：随机访问数据集，每个文件只访问一次（客户端缓存💥）
 
+</v-clicks>
+
 <!--
 LRU 失效：当缓存较小时，LRU 策略优先保留靠近根目录的目录，而最后一级目录的命中率——在实验中构成 90%的访问——与缓存大小成正比
 -->
@@ -146,6 +183,9 @@ hideInToc: true
 
 # DL workload pattern
 
+<v-clicks depth="2">
+
+
 3. Burst file access
    - 在标注阶段，推理任务读写文件，涉及大量小文件 IO 和目录列表
    - 为充分利用 GPU 的并行性，数据对象以批量方式访问和处理，导致同一目录下的突发文件访问
@@ -154,6 +194,8 @@ hideInToc: true
 4. Tight Resource budget
    - CPU 和内存是计算节点的稀缺资源
    - 要让渡资源给训练任务
+
+</v-clicks>
 
 <!--
 burst size=100 时，元数据服务器（MDS）在读取操作期间经历了严重的负载不平衡
@@ -166,6 +208,8 @@ burst size=100 时，元数据服务器（MDS）在读取操作期间经历了�
 
 文件系统：实现文件的 **按名存取**
 
+<v-clicks>
+
 - open/close
 - lseek
 - fsync
@@ -173,6 +217,8 @@ burst size=100 时，元数据服务器（MDS）在读取操作期间经历了�
 - chmod/chown
 - read/write
 - aio_read/aio_write/aio_suspend
+
+</v-clicks>
 
 ---
 hideInToc: true
@@ -184,6 +230,8 @@ hideInToc: true
 
 ## 缺点
 
+<v-clicks depth="2">
+
 - POSIX 接口和分层目录组织并不适合分布式环境
   - 客户端打开相同的文件，需要大量相同的 path resolve，带来大量的 lookup 和 getattr 操作
 - POSIX 是有状态协议
@@ -193,6 +241,8 @@ hideInToc: true
 - POSIX 元数据需求强一致 => Meta 需分布式事务
 - 数据面：`write()` 成功后，其他 `read()` 必须看到最新数据
   - 很多分布式文件系统放松了此语义，转向 close-to-open：JuiceFS、NFS
+
+</v-clicks>
 
 <!--
 - 许多关键用例中存在效率问题
@@ -211,9 +261,15 @@ hideInToc: true
 
 ![](./public/x1.png)
 
+<v-clicks depth="2">
+
+
 - 树状组织要求 DFS 频繁进行路径解析
 - 在进行任何文件操作（如 read/write）之前，DFS 客户端必须解析完整路径以定位目标文件的 inode
 - 路径解析需要在 client 和 meta 之间进行多次往返通信：单个文件操作涉及多个网络请求
+
+</v-clicks>
+
 
 <!--
 2. 这涉及验证路径上每个目录的存在性和权限
@@ -222,6 +278,8 @@ hideInToc: true
 ---
 
 # 降低 path resolve 开销
+
+<v-clicks depth="3">
 
 - 现有的 DFS 采用客户端元数据缓存：有状态客户端
   - 客户端维护本地目录/文件元数据缓存以避免频繁远程查找
@@ -237,6 +295,8 @@ hideInToc: true
 
 - 要么消耗大量客户端内存来缓存大型目录树
 - 要么由于请求放大而导致性能严重下降
+
+</v-clicks>
 
 <!--
 https://hub.baai.ac.cn/view/29387
@@ -270,11 +330,15 @@ FalconFS 提出了无状态客户端架构：
 
 还需要：
 
+<v-clicks depth="2">
+
 1. 客户端需要知道文件 inode 在哪台服务器上。Q1
    - FalconFS 提出了混合元数据索引方法
 2. 每个服务端都可以本地进行 path resolve，而不是进行网络跳转。Q2
    - Lazy namespace replication，将文件系统的目录树复制到所有元数据服务器
    - 目录树的修改采用 lazy replicate 模式：基于失效进行并发控制
+
+</v-clicks>
 
 <!--
 (1) 由于计算节点的资源预算紧张，如§2.2 所述，服务器比客户端拥有更多的内存资源。
@@ -288,8 +352,12 @@ FalconFS 提出了无状态客户端架构：
 
 一般的做法：
 
+<v-clicks depth="2">
+
 - 路径部分哈希（分桶）：例如，使用父目录 ID 作为键进行哈希
 - 全路径哈希：整个路径作为哈希，目录重命名变得极其昂贵
+
+</v-clicks>
 
 ## FalconFS
 
@@ -297,9 +365,13 @@ FalconFS 提出了无状态客户端架构：
 
 核心优势：
 
+<v-clicks depth="2">
+
 - 结合哈希的快速定位和路径遍历的准确性
 - 动态负载均衡：通过 exception table 处理热点文件名
 - 支持目录重命名操作，避免全路径哈希的性能问题
+
+</v-clicks>
 
 ---
 
@@ -323,6 +395,8 @@ hideInToc: true
 
 # FalconFS 架构详解
 
+<v-clicks depth="3">
+
 - 元数据节点（MNode）是带有定制扩展的 PostgreSQL 数据库
   - 每个 MNode 维护一个懒惰同步的目录树结构（命名空间副本）和文件属性（inode）的一部分
   - 主从复制
@@ -330,6 +404,8 @@ hideInToc: true
     - 文件，inode，通过 hybrid indexing 方式，分布到所有 MNode 上
 - central coordinator 管理命名空间更改，运行一个负载平衡算法，以平衡 MNodes 之间的 inode 分布
 - **并发请求合并**：客户端将多个文件操作请求合并为单个批量请求，减少网络往返次数，显著提升深度学习训练场景下的数据加载效率
+
+</v-clicks>
 
 ---
 
@@ -355,6 +431,8 @@ hideInToc: true
 
 # Hybrid Metadata Indexing 深入分析
 
+<v-clicks depth="2">
+
 问题：只用文件名进行 hash 无法保证文件在不同服务器之间均匀分布
 
 解决方案：
@@ -362,11 +440,15 @@ hideInToc: true
 - 深度学习数据集通常具有较大的目录大小，其大小可能比 MNode 的数量多几倍
 - 根据大数定律，当目录数量远大于MNode数量时，文件在各个目录中分配到 MNode 的分布趋于均匀
 
+</v-clicks>
+
 <!--
 大数定律：当样本数据无限大时，样本均值趋于总体均值
 某个随机事件在单次试验中可能发生也可能不发生，但在大量重复实验中往往呈现出明显的规律性，即该随机事件发生的频率会向某个常数值收敛，该常数值即为该事件发生的概率
 https://zh.wikipedia.org/wiki/%E5%A4%A7%E6%95%B8%E6%B3%95%E5%89%87
 -->
+
+<v-clicks depth="2">
 
 解决方案：
 
@@ -374,11 +456,13 @@ https://zh.wikipedia.org/wiki/%E5%A4%A7%E6%95%B8%E6%B3%95%E5%89%87
   - 应用程序的命名规范可能导致某些文件名比其他文件名更频繁
     - 比如基本所有的 C++ 项目里都有很多个 `CMakeLists.txt`
   - 唯一文件名的数量与 MNodes 的数量相差不大
-    - 这可能因 Hash fn 自身的 Hash Variance 而导致分布不均衡
+    - 这可能因 Hash 自身的 Hash Variance 而导致分布不均衡
 
 增加选择性重定向机制：维护例外重定向表（文中叫 exception table）
 
 该表指定了哪些文件名以及如何进行重定向
+
+</v-clicks>
 
 <!--
 1. 为了放置具有热文件名的文件，FalconFS 不仅根据文件名，还根据其父目录 ID 计算哈希值。因此，即使一个热文件名存在于多个目录中，相应的文件也会放置在不同的 MNode 上
@@ -389,6 +473,8 @@ https://zh.wikipedia.org/wiki/%E5%A4%A7%E6%95%B8%E6%B3%95%E5%89%87
 ---
 
 # 负载均衡
+
+<v-clicks depth="8">
 
 Coordinator 使用 MNode 周期性报告的统计数据来做出重新平衡的决策
 
@@ -409,6 +495,8 @@ Coordinator 使用 MNode 周期性报告的统计数据来做出重新平衡的�
 - 选取策略：最小化最大 inode 计数
   - 并均匀地分散到系统中的所有节点上；或整体地从 $N_\text{max}$ => $N_\text{min}$
 
+</v-clicks>
+
 ---
 
 # Lazy Namespace Replication
@@ -419,17 +507,23 @@ FalconFS 在每个 MNode 上维护一个一致的但不一定完整的命名空�
 
 设计灵感：
 
+<v-clicks depth="2">
+
 - 推迟同步到访问时。在所有 MNodes 上急切地复制目录创建将需要昂贵且不可扩展的两阶段提交
 - 使用失效机制作为轻量级锁
   - 当操作修改目录结构或权限时，为了保持一致性，必须阻止修改目录下子树中的并发操作
   - 通过在所有节点上使能相应的副本条目失效来替代传统的两阶段锁，从而节省了一轮请求广播
 - 性能优势：避免分布式事务开销，提高元数据操作吞吐量
 
+</v-clicks>
+
 ---
 
 # VFS 兼容性
 
 需要绕过内核中的 VFS 路径解析逻辑
+
+<v-clicks depth="3">
 
 - 当 VFS 调用客户端模块为路径中的中间目录提供的 `lookup()` 方法时：返回权限为 `0777` 的目录属性以通过 VFS 检查
   - VFS 在路径遍历时设置全局状态标志 `LOOKUP_PARENT`，以指示最终组件尚未到达
@@ -440,32 +534,34 @@ FalconFS 在每个 MNode 上维护一个一致的但不一定完整的命名空�
     - 客户端模块随后通过 uid 和 gid 检查命中条目是否为虚假条目，以及该条目是否正在用于解析最终路径组件（通过 `LOOKUP_PARENT` 标志）
       - 如果两个条件都满足，该模块将从 MNode 获取真实属性并更新 dcache 条目。
 
+</v-clicks>
+
 ---
 
 # 为什么 Lustre 在 HPC 场景应用广泛？
 
-## HPC vs 深度学习：工作负载差异
-
 | 特性             | HPC 工作负载      | 深度学习工作负载   |
 | ---------------- | ----------------- | ------------------ |
-| **文件访问模式** | 顺序读写大文件    | 随机访问海量小文件 |
-| **数据特征**     | 大文件（GB-TB级） | 小文件（KB-MB级）  |
-| **访问局部性**   | 强时间局部性      | 弱局部性，随机遍历 |
-| **并发模式**     | MPI-IO 协同访问   | 独立随机访问       |
-| **缓存效果**     | 客户端缓存有效    | 客户端缓存失效     |
+| 文件访问模式 | 顺序读写大文件    | 随机访问海量小文件 |
+| 数据特征     | 大文件（GB-TB级） | 小文件（KB-MB级）  |
+| 访问局部性   | 强时间局部性      | 弱局部性，随机遍历 |
+| 并发模式     | MPI-IO 协同访问   | 独立随机访问       |
+| 缓存效果     | 客户端缓存有效    | 客户端缓存失效     |
+
+<!-- # 为什么 Lustre 在 HPC 场景应用广泛？
 
 ## Lustre 在 HPC 的优势
 
-- **高吞吐量**：支持数百GB/s到TB/s的聚合吞吐量 <mcreference link="https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre" index="3">3</mcreference>
-- **大规模扩展**：支持数万客户端和数十PB存储 <mcreference link="https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre" index="3">3</mcreference>
-- **并行文件系统**：大文件分布在多个节点，适合HPC的大文件处理 <mcreference link="https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre" index="3">3</mcreference>
-- **MPI-IO支持**：多进程协同读写同一文件，适合科学计算 <mcreference link="https://juicefs.com/en/blog/user-stories/hpc-ai-file-system" index="4">4</mcreference>
+- 高吞吐量：支持数百 GB/s 到 TB/s 的聚合吞吐量
+- 大规模扩展：支持数万客户端和数十 PB 存储
+- 并行文件系统：大文件分布在多个节点，适合 HPC 的大文件处理
+- MPI-IO 支持：多进程协同读写同一文件，适合科学计算
 
 ## 为什么不适合深度学习？
 
-- HPC应用通常处理大文件，客户端缓存命中率高
+- HPC 应用通常处理大文件，客户端缓存命中率高
 - 深度学习随机访问模式使传统缓存策略失效
-- 小文件元数据操作成为瓶颈，而非数据吞吐量
+- 小文件元数据操作成为瓶颈，而非数据吞吐量 -->
 
 ---
 
@@ -494,9 +590,7 @@ layout: quote
 hideInToc: true
 ---
 
-# Thanks for listening
-
-QA time!
+# Thanks for listening!
 
 <!--
 # 总结
